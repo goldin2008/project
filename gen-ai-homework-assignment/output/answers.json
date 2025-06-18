@@ -1,0 +1,92 @@
+[
+  {
+    "query_id": "Q1",
+    "query_text": "Can I see any doctor with Original Medicare?",
+    "answer": "Yes",
+    "source_chunks": [
+      "chunk_1",
+      "chunk_4",
+      "chunk_2"
+    ],
+    "source_text": [
+      "*Original Medicare*\n\nYou can go to any doctor or hospital that takes Medicare, anywhere in the U.S.",
+      "You may need to get a referral to see a specialist.\n\n**Cost**\n\n*Original Medicare*",
+      "In most cases you don\u2019t need a referral to see a specialist.\n\n*Medicare Advantage*"
+    ]
+  },
+  {
+    "query_id": "Q2",
+    "query_text": "What is the yearly out-of-pocket limit with Medicare Advantage?",
+    "answer": "I don't know",
+    "source_chunks": [
+      "chunk_9",
+      "chunk_13",
+      "chunk_11"
+    ],
+    "source_text": [
+      "There\u2019s no yearly limit on what you pay out-of-pocket, unless you have supplemental coverage \u2013 like Medicare Supplement Insurance (Medigap),",
+      "*Medicare Advantage*\n\nOut-of-pocket costs vary. Plans may have different out-of-pocket costs for certain services.",
+      "You can choose to buy Medigap to help pay your out-of-pocket costs that Medicare doesn't cover (like your 20%"
+    ]
+  },
+  {
+    "query_id": "Q3",
+    "query_text": "Does Original Medicare cover routine physical exams?",
+    "answer": "No",
+    "source_chunks": [
+      "chunk_21",
+      "chunk_20",
+      "chunk_25"
+    ],
+    "source_text": [
+      "Medicare doesn\u2019t cover some services, like routine physical exams, eye exams, and most dental care.",
+      "Original Medicare covers most medically necessary services and supplies in hospitals, doctors\u2019 offices, and other health care facilities. Original Medicare doesn\u2019t cover some services,",
+      "to determine medical necessity. Plans may also offer some extra benefits that Original Medicare doesn't cover."
+    ]
+  },
+  {
+    "query_id": "Q4",
+    "query_text": "Do I need a referral to see a specialist with Medicare Advantage?",
+    "answer": "Yes",
+    "source_chunks": [
+      "chunk_2",
+      "chunk_4",
+      "chunk_22"
+    ],
+    "source_text": [
+      "In most cases you don\u2019t need a referral to see a specialist.\n\n*Medicare Advantage*",
+      "You may need to get a referral to see a specialist.\n\n**Cost**\n\n*Original Medicare*",
+      "In most cases, you don\u2019t need approval (prior authorization) for Original Medicare to cover your services or supplies."
+    ]
+  },
+  {
+    "query_id": "Q5",
+    "query_text": "Can I buy Medigap with a Medicare Advantage plan?",
+    "answer": "Yes",
+    "source_chunks": [
+      "chunk_11",
+      "chunk_19",
+      "chunk_23"
+    ],
+    "source_text": [
+      "You can choose to buy Medigap to help pay your out-of-pocket costs that Medicare doesn't cover (like your 20%",
+      "You can\u2019t buy Medigap to cover your out-of-pocket costs.\n\n**Coverage**\n\n*Original Medicare*",
+      "You can join a separate Medicare drug plan to get Medicare drug coverage (Part D).\n\n*Medicare Advantage*"
+    ]
+  },
+  {
+    "query_id": "Q6",
+    "query_text": "What are the costs for services with original medicare",
+    "answer": "$0 premium",
+    "source_chunks": [
+      "chunk_4",
+      "chunk_20",
+      "chunk_15"
+    ],
+    "source_text": [
+      "You may need to get a referral to see a specialist.\n\n**Cost**\n\n*Original Medicare*",
+      "Original Medicare covers most medically necessary services and supplies in hospitals, doctors\u2019 offices, and other health care facilities. Original Medicare doesn\u2019t cover some services,",
+      "$0 premium and may help pay all or part of your Part B premium. Most plans include Medicare drug coverage (Part D)."
+    ]
+  }
+]
