@@ -1206,6 +1206,155 @@ def plot_model_metric_trends_combined_vertical(model_data_dict, save_path="plots
 #         print(f"\n Judge Feedback (Score < {judge_threshold}):")
 #         judge_table = tabulate(low_score_judges, headers=["Judge", "Feedback Summary"], tablefmt="grid")
 #         print(judge_table)
+# def print_business_friendly_summary(entity, judge_threshold=4.0, output_basename="../data/output/"):
+#     from tabulate import tabulate
+#     import re
+#     import os
+
+#     entity_id = entity['entity_id']
+#     risk_score = entity['risk_score']
+#     prompt = entity.get('prompt', '[No prompt]')
+#     llm_explanation = entity.get('llm_explanation', '[No explanation]')
+#     stats = entity.get('stats', {})
+#     features = entity['features']
+#     evaluations = entity.get('evaluations', {})
+
+#     file_name = f"summary_report_id_{entity_id}"
+
+#     output_path = f"{output_basename}{file_name}"
+
+
+#     # Extract top 5 features by contribution
+#     feature_rows = sorted([
+#         (fname, fdata.get('contribution_pct', 0))
+#         for fname, fdata in features.items()
+#     ], key=lambda x: -x[1])[:5]
+
+#     # Format tables
+#     feature_table = tabulate(
+#         [(fname, f"{contrib:.1f}%") for fname, contrib in feature_rows],
+#         headers=["Feature", "Contribution %"],
+#         tablefmt="grid"
+#     )
+
+#     feature_table_html = tabulate(
+#         [(fname, f"{contrib:.1f}%") for fname, contrib in feature_rows],
+#         headers=["Feature", "Contribution %"],
+#         tablefmt="html"
+#     )
+
+#     stats_table = tabulate(
+#         [
+#             (metric,
+#              f"{metric_stats['mean']:.1f}",
+#              f"{metric_stats['std']:.2f}",
+#              f"{metric_stats['min']:.1f}–{metric_stats['max']:.1f}")
+#             for metric, metric_stats in stats.items()
+#         ],
+#         headers=["Metric", "Mean", "Std Dev", "Range"],
+#         tablefmt="grid"
+#     )
+
+#     stats_table_html = tabulate(
+#         [
+#             (metric,
+#              f"{metric_stats['mean']:.1f}",
+#              f"{metric_stats['std']:.2f}",
+#              f"{metric_stats['min']:.1f}–{metric_stats['max']:.1f}")
+#             for metric, metric_stats in stats.items()
+#         ],
+#         headers=["Metric", "Mean", "Std Dev", "Range"],
+#         tablefmt="html"
+#     )
+
+#     # Judge feedback below threshold
+#     low_score_judges = []
+#     for judge, feedback in evaluations.items():
+#         for metric in ['Clarity', 'Conciseness', 'Completeness']:
+#             if feedback.get(metric, 5) < judge_threshold:
+#                 low_score_judges.append((judge, feedback.get("Summary", "[No summary]")))
+#                 break
+
+#     judge_feedback_txt = ""
+#     judge_feedback_html = ""
+
+#     if low_score_judges:
+#         judge_feedback_txt += f"\n Judge Feedback (Score < {judge_threshold}):\n"
+#         judge_feedback_txt += tabulate(low_score_judges, headers=["Judge", "Feedback Summary"], tablefmt="grid")
+
+#         judge_feedback_html += f"<h3>Judge Feedback (Score &lt; {judge_threshold}):</h3>\n"
+#         judge_feedback_html += tabulate(low_score_judges, headers=["Judge", "Feedback Summary"], tablefmt="html")
+
+#     # Build content
+#     report_txt = f"""
+# {'='*80}
+#  Entity ID: {entity_id} |  Risk Score: {risk_score:.0%}
+# {'='*80}
+
+#  Top Contributing Features:
+# {feature_table}
+
+#  Prompt Given to LLM:
+# {prompt}
+
+#  LLM Explanation:
+# {llm_explanation}
+
+#  Evaluation Summary:
+# {stats_table}
+# """
+
+#     # Discrepancy warning
+#     match = re.search(r'(\d{2,3})\%', llm_explanation)
+#     if match:
+#         explained_score = int(match.group(1))
+#         actual_score = int(risk_score * 100)
+#         if abs(explained_score - actual_score) > 20:
+#             report_txt += (
+#                 f"\n⚠️ Warning: LLM explanation mentions a risk score of {explained_score}%, "
+#                 f"but actual score is {actual_score}%. This may indicate a hallucination.\n"
+#             )
+
+#     report_txt += judge_feedback_txt
+
+#     # HTML version
+#     report_html = f"""
+# <html>
+# <head><title>Entity Summary Report</title></head>
+# <body>
+# <h2>Entity ID: {entity_id} | Risk Score: {risk_score:.0%}</h2>
+# <h3>Top Contributing Features:</h3>
+# {feature_table_html}
+# <h3>Prompt Given to LLM:</h3>
+# <pre>{prompt}</pre>
+# <h3>LLM Explanation:</h3>
+# <pre>{llm_explanation}</pre>
+# <h3>Evaluation Summary:</h3>
+# {stats_table_html}
+# """
+
+#     if match and abs(explained_score - actual_score) > 20:
+#         report_html += (
+#             f"<p><b>⚠️ Warning:</b> LLM explanation mentions a risk score of {explained_score}%, "
+#             f"but actual score is {actual_score}%. This may indicate a hallucination.</p>"
+#         )
+
+#     report_html += judge_feedback_html
+#     report_html += "</body></html>"
+
+#     # Write to files
+#     txt_path = f"{output_path}.txt"
+#     html_path = f"{output_path}.html"
+
+#     with open(txt_path, "w", encoding="utf-8") as f_txt:
+#         f_txt.write(report_txt)
+
+#     with open(html_path, "w", encoding="utf-8") as f_html:
+#         f_html.write(report_html)
+
+#     # Also print to console
+#     print(report_txt)
+#     # print(f"\n📁 Output saved to: {os.path.abspath(txt_path)} and {os.path.abspath(html_path)}")
 def print_business_friendly_summary(entity, judge_threshold=4.0, output_basename="../data/output/"):
     from tabulate import tabulate
     import re
@@ -1220,9 +1369,7 @@ def print_business_friendly_summary(entity, judge_threshold=4.0, output_basename
     evaluations = entity.get('evaluations', {})
 
     file_name = f"summary_report_id_{entity_id}"
-
     output_path = f"{output_basename}{file_name}"
-
 
     # Extract top 5 features by contribution
     feature_rows = sorted([
@@ -1230,7 +1377,7 @@ def print_business_friendly_summary(entity, judge_threshold=4.0, output_basename
         for fname, fdata in features.items()
     ], key=lambda x: -x[1])[:5]
 
-    # Format tables
+    # Format feature and stats tables
     feature_table = tabulate(
         [(fname, f"{contrib:.1f}%") for fname, contrib in feature_rows],
         headers=["Feature", "Contribution %"],
@@ -1267,25 +1414,37 @@ def print_business_friendly_summary(entity, judge_threshold=4.0, output_basename
         tablefmt="html"
     )
 
-    # Judge feedback below threshold
-    low_score_judges = []
+    # Collect all judge feedback summaries with low-score flag
+    judge_feedback_rows = []
     for judge, feedback in evaluations.items():
-        for metric in ['Clarity', 'Conciseness', 'Completeness']:
-            if feedback.get(metric, 5) < judge_threshold:
-                low_score_judges.append((judge, feedback.get("Summary", "[No summary]")))
-                break
+        summary = feedback.get("Summary", "[No summary]")
+        low_score_flag = any(
+            feedback.get(metric, 5) < judge_threshold
+            for metric in ['Clarity', 'Conciseness', 'Completeness']
+        )
+        tag = "⚠️ Low Score" if low_score_flag else ""
+        judge_feedback_rows.append((judge, summary, tag))
 
+    # Format judge feedback
     judge_feedback_txt = ""
     judge_feedback_html = ""
 
-    if low_score_judges:
-        judge_feedback_txt += f"\n Judge Feedback (Score < {judge_threshold}):\n"
-        judge_feedback_txt += tabulate(low_score_judges, headers=["Judge", "Feedback Summary"], tablefmt="grid")
+    if judge_feedback_rows:
+        judge_feedback_txt += "\n Judge Feedback Summary (all judges):\n"
+        judge_feedback_txt += tabulate(
+            judge_feedback_rows,
+            headers=["Judge", "Summary", "Flag"],
+            tablefmt="grid"
+        )
 
-        judge_feedback_html += f"<h3>Judge Feedback (Score &lt; {judge_threshold}):</h3>\n"
-        judge_feedback_html += tabulate(low_score_judges, headers=["Judge", "Feedback Summary"], tablefmt="html")
+        judge_feedback_html += "<h3>Judge Feedback Summary (all judges):</h3>\n"
+        judge_feedback_html += tabulate(
+            judge_feedback_rows,
+            headers=["Judge", "Summary", "Flag"],
+            tablefmt="html"
+        )
 
-    # Build content
+    # Build plain text report
     report_txt = f"""
 {'='*80}
  Entity ID: {entity_id} |  Risk Score: {risk_score:.0%}
@@ -1304,7 +1463,7 @@ def print_business_friendly_summary(entity, judge_threshold=4.0, output_basename
 {stats_table}
 """
 
-    # Discrepancy warning
+    # Optional discrepancy warning
     match = re.search(r'(\d{2,3})\%', llm_explanation)
     if match:
         explained_score = int(match.group(1))
@@ -1317,7 +1476,7 @@ def print_business_friendly_summary(entity, judge_threshold=4.0, output_basename
 
     report_txt += judge_feedback_txt
 
-    # HTML version
+    # Build HTML report
     report_html = f"""
 <html>
 <head><title>Entity Summary Report</title></head>
@@ -1342,7 +1501,7 @@ def print_business_friendly_summary(entity, judge_threshold=4.0, output_basename
     report_html += judge_feedback_html
     report_html += "</body></html>"
 
-    # Write to files
+    # Save to file
     txt_path = f"{output_path}.txt"
     html_path = f"{output_path}.html"
 
@@ -1352,7 +1511,6 @@ def print_business_friendly_summary(entity, judge_threshold=4.0, output_basename
     with open(html_path, "w", encoding="utf-8") as f_html:
         f_html.write(report_html)
 
-    # Also print to console
     print(report_txt)
     # print(f"\n📁 Output saved to: {os.path.abspath(txt_path)} and {os.path.abspath(html_path)}")
 
