@@ -1,54 +1,60 @@
+# Risk Explanation Narrative Generator
+
+A pipeline for generating and evaluating risk explanation narratives using SHAP values and LLMs.
+
+## Project Structure
+
 ```text
 risk_explainer/
-├── config/                        # All configuration constants
+├── config/                        # Configuration files
 │   ├── __init__.py
-│   └── config.py
-
-├── clients/                       # LLM and judge clients
+│   └── config.py                  # Global constants and settings
+│
+├── clients/                       # API clients
 │   ├── __init__.py
-│   └── azure_openai_client.py           # AzureClient and MockAzureClient
-
-├── prompts/                       # Prompt builders
+│   └── azure_openai_client.py     # Azure OpenAI client implementation
+│
+├── prompts/                       # Prompt engineering
 │   ├── __init__.py
-│   └── prompt_generator.py        # Functions to build standard & controlled prompts
-
-├── model/                         # Unit tests for each module
+│   └── prompt_generator.py        # Dynamic prompt construction
+│
+├── model/                         # Core modeling logic
 │   ├── __init__.py
-│   ├── shap_analysis.py
-│   ├── shap_utils.py
-│   └── trainer.py
-
-├── evaluation/                    # Judge model evaluation logic
+│   ├── shap_analysis.py           # SHAP value computation
+│   ├── shap_utils.py              # SHAP visualization helpers
+│   └── trainer.py                 # Model training routines
+│
+├── evaluation/                    # Quality assessment
 │   ├── __init__.py
-│   └── judge.py                  # extract_scores, evaluation prompt builder, etc.
-
-├── workflows/                     # Main logic for generating and evaluating narratives
+│   └── judge.py                   # Narrative evaluation framework
+│
+├── workflows/                     # Data pipelines
 │   ├── __init__.py
-│   └── generate_data.py         # load, build, evaluate, and save enriched JSONs
-
-├── notbooks/                         # Jupyter notebooks for EDA, dev, demo
-│   ├── 01_feature_analysis.ipynb       # Exploratory Data Analysis (EDA) of input features
-│   ├── 02_llm_narrative_testing.ipynb  # Interactive narrative generation and tweaking
-│   ├── 03_judge_eval_debug.ipynb       # Test judge evaluation on sample prompts
-│   ├── 04_end_to_end_pipeline.ipynb    # Run full workflow interactively
-│   └── 05_run.ipynb    # Run full workflow interactively
-
-├── data/                          # Input/output files (not tracked in version control)
-│   ├── input/
-│   └── output/
-
-├── tests/                         # Unit tests for each module
+│   └── generate_data.py           # End-to-end narrative generation
+│
+├── notebooks/                     # Experimental work
+│   ├── 01_feature_analysis.ipynb        # Feature exploration
+│   ├── 02_llm_narrative_testing.ipynb   # Prompt engineering
+│   ├── 03_judge_eval_debug.ipynb        # Evaluation tuning
+│   ├── 04_end_to_end_pipeline.ipynb     # Full workflow demo
+│   └── 05_run.ipynb                     # Production pipeline
+│
+├── data/                          # Datasets (gitignored)
+│   ├── input/                     # Raw feature data
+│   └── output/                    # Generated narratives
+│
+├── tests/                         # Test suite
 │   ├── __init__.py
-│   ├── test_azure_client.py
-│   ├── test_builders.py
-│   ├── test_judge.py
-│   └── test_generate_data.py
-
-├── scripts/                       # Optional CLI or orchestration scripts
-│   └── main.py                   # Entrypoint: load config, run full workflow
-
-├── .env                           # Used with dotenv to manage secrets
-├── .gitignore                    # Ignore sensitive/log/compiled/output files
+│   ├── test_azure_client.py       # Client tests
+│   ├── test_builders.py           # Prompt builder tests
+│   ├── test_judge.py              # Evaluation tests
+│   └── test_generate_data.py      # Pipeline tests
+│
+├── scripts/                       # Utility scripts
+│   └── main.py                    # CLI entry point
+│
+├── .env                           # Environment variables
+├── .gitignore                    # Version control exclusions
 ├── requirements.txt              # Python dependencies
-├── README.md                     # Project overview, how to run, etc.
-└── setup.py                      # Optional: make it pip-installable
+├── README.md                     # This documentation
+└── setup.py                      # Package configuration
