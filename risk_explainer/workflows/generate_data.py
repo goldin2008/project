@@ -1062,7 +1062,74 @@ def plot_model_metric_trends_combined_vertical(model_data_dict, save_path="plots
 #             print(f"\n⚠️ Warning: LLM explanation mentions a risk score of {explained_score}%, "
 #                   f"but actual score is {actual_score}%. This may indicate a hallucination.")
 
-def print_business_friendly_summary(entity):
+# def print_business_friendly_summary(entity):
+#     from tabulate import tabulate
+#     import re
+
+#     entity_id = entity['entity_id']
+#     risk_score = entity['risk_score']
+#     prompt = entity.get('prompt', '[No prompt]')
+#     llm_explanation = entity.get('llm_explanation', '[No explanation]')
+#     stats = entity.get('stats', {})
+#     features = entity['features']
+
+#     # Extract top 5 features by contribution
+#     feature_rows = sorted([
+#         (fname, fdata.get('contribution_pct', 0))
+#         for fname, fdata in features.items()
+#     ], key=lambda x: -x[1])[:5]
+
+#     # Format feature table without value
+#     feature_table = tabulate(
+#         [(fname, f"{contrib:.1f}%") for fname, contrib in feature_rows],
+#         headers=["Feature", "Contribution %"],
+#         tablefmt="grid"
+#     )
+
+#     # Format stats table
+#     stats_table = tabulate(
+#         [
+#             (metric,
+#              f"{metric_stats['mean']:.1f}",
+#              f"{metric_stats['std']:.2f}",
+#              f"{metric_stats['min']:.1f}–{metric_stats['max']:.1f}")
+#             for metric, metric_stats in stats.items()
+#         ],
+#         headers=["Metric", "Mean", "Std Dev", "Range"],
+#         tablefmt="grid"
+#     )
+
+#     # Print the full report
+#     print(f"\n{'='*80}")
+#     # print(f"🆔 Entity ID: {entity_id} | 💡 Risk Score: {risk_score:.0%}")
+#     print(f" Entity ID: {entity_id} |  Risk Score: {risk_score:.0%}")
+#     print(f"{'='*80}")
+
+#     # print("\n📌 Top Contributing Features:")
+#     print("\n Top Contributing Features:")
+#     print(feature_table)
+
+#     # print("\n🤖 Prompt Given to LLM:")
+#     print("\n Prompt Given to LLM:")
+#     print(prompt)
+
+#     # print("\n📝 LLM Explanation:")
+#     print("\n LLM Explanation:")
+#     print(llm_explanation)
+
+#     # print("\n📊 Evaluation Summary:")
+#     print("\n Evaluation Summary:")
+#     print(stats_table)
+
+#     # Optional: Flag discrepancy between risk score and explanation (if numeric in text)
+#     match = re.search(r'(\d{2,3})\%', llm_explanation)
+#     if match:
+#         explained_score = int(match.group(1))
+#         actual_score = int(risk_score * 100)
+#         if abs(explained_score - actual_score) > 20:
+#             print(f"\n⚠️ Warning: LLM explanation mentions a risk score of {explained_score}%, "
+#                   f"but actual score is {actual_score}%. This may indicate a hallucination.")
+def print_business_friendly_summary(entity, judge_threshold=4.0):
     from tabulate import tabulate
     import re
 
@@ -1072,6 +1139,7 @@ def print_business_friendly_summary(entity):
     llm_explanation = entity.get('llm_explanation', '[No explanation]')
     stats = entity.get('stats', {})
     features = entity['features']
+    evaluations = entity.get('evaluations', {})
 
     # Extract top 5 features by contribution
     feature_rows = sorted([
@@ -1079,14 +1147,14 @@ def print_business_friendly_summary(entity):
         for fname, fdata in features.items()
     ], key=lambda x: -x[1])[:5]
 
-    # Format feature table without value
+    # Format feature table without values
     feature_table = tabulate(
         [(fname, f"{contrib:.1f}%") for fname, contrib in feature_rows],
         headers=["Feature", "Contribution %"],
         tablefmt="grid"
     )
 
-    # Format stats table
+    # Format evaluation stats
     stats_table = tabulate(
         [
             (metric,
@@ -1099,29 +1167,24 @@ def print_business_friendly_summary(entity):
         tablefmt="grid"
     )
 
-    # Print the full report
+    # Print summary
     print(f"\n{'='*80}")
-    # print(f"🆔 Entity ID: {entity_id} | 💡 Risk Score: {risk_score:.0%}")
     print(f" Entity ID: {entity_id} |  Risk Score: {risk_score:.0%}")
     print(f"{'='*80}")
 
-    # print("\n📌 Top Contributing Features:")
     print("\n Top Contributing Features:")
     print(feature_table)
 
-    # print("\n🤖 Prompt Given to LLM:")
     print("\n Prompt Given to LLM:")
     print(prompt)
 
-    # print("\n📝 LLM Explanation:")
     print("\n LLM Explanation:")
     print(llm_explanation)
 
-    # print("\n📊 Evaluation Summary:")
     print("\n Evaluation Summary:")
     print(stats_table)
 
-    # Optional: Flag discrepancy between risk score and explanation (if numeric in text)
+    # Optional: Flag discrepancy between LLM explanation and actual score
     match = re.search(r'(\d{2,3})\%', llm_explanation)
     if match:
         explained_score = int(match.group(1))
@@ -1130,6 +1193,18 @@ def print_business_friendly_summary(entity):
             print(f"\n⚠️ Warning: LLM explanation mentions a risk score of {explained_score}%, "
                   f"but actual score is {actual_score}%. This may indicate a hallucination.")
 
+    # Show judge feedback if any metric score < threshold
+    low_score_judges = []
+    for judge, feedback in evaluations.items():
+        for metric in ['Clarity', 'Conciseness', 'Completeness']:
+            if feedback.get(metric, 5) < judge_threshold:
+                low_score_judges.append((judge, feedback.get("Summary", "[No summary]")))
+                break
+
+    if low_score_judges:
+        print(f"\n Judge Feedback (Score < {judge_threshold}):")
+        judge_table = tabulate(low_score_judges, headers=["Judge", "Feedback Summary"], tablefmt="grid")
+        print(judge_table)
 
 
 
