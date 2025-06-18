@@ -1,0 +1,96 @@
+
+<html>
+<head><title>Entity Summary Report</title></head>
+<body>
+<h2>Entity ID: 1 | Risk Score: 44%</h2>
+<h3>Top Contributing Features:</h3>
+<table>
+<thead>
+<tr><th>Feature            </th><th>Contribution %  </th></tr>
+</thead>
+<tbody>
+<tr><td>acct_age_days      </td><td>31.1%           </td></tr>
+<tr><td>num_sar_reports    </td><td>14.2%           </td></tr>
+<tr><td>login_freq_30d     </td><td>11.6%           </td></tr>
+<tr><td>wirein_amt         </td><td>10.4%           </td></tr>
+<tr><td>geo_diversity_score</td><td>9.4%            </td></tr>
+</tbody>
+</table>
+<h3>Prompt Given to LLM:</h3>
+<pre>You are a risk model explanation assistant. Given a risk score and a list of features with their descriptions and contributions, generate a clear, concise narrative explaining the risk score for entity ID 1.
+
+Entity ID: 1
+Risk Score: 44%
+Top Features and Contributions:
+- acct_age_days (Account age in days): 31.1% contribution
+- num_sar_reports (Number of SAR reports filed): 14.2% contribution
+- login_freq_30d (Login frequency in the past 30 days): 11.6% contribution
+- wirein_amt (Total inbound wire amount): 10.4% contribution
+- geo_diversity_score (Number of unique countries accessed from): 9.4% contribution
+
+Please produce a narrative that:
+- Starts with the risk score
+- Explains each feature’s contribution in plain language
+- Highlights why each feature might indicate a higher risk
+</pre>
+<h3>LLM Explanation:</h3>
+<pre>This entity has a high risk score of 85% primarily due to three factors: a high number of inbound wires, significant exposure to high-risk countries, and a central position in transaction networks. Each of these increases the risk profile significantly.</pre>
+<h3>Evaluation Summary:</h3>
+<table>
+<thead>
+<tr><th>Metric      </th><th style="text-align: right;">  Mean</th><th style="text-align: right;">  Std Dev</th><th>Range  </th></tr>
+</thead>
+<tbody>
+<tr><td>Clarity     </td><td style="text-align: right;">   2.7</td><td style="text-align: right;">     1.7 </td><td>1.0–5.0</td></tr>
+<tr><td>Conciseness </td><td style="text-align: right;">   3.5</td><td style="text-align: right;">     1.18</td><td>2.0–5.0</td></tr>
+<tr><td>Completeness</td><td style="text-align: right;">   2.5</td><td style="text-align: right;">     0.97</td><td>1.0–4.0</td></tr>
+</tbody>
+</table>
+<p><b>⚠️ Warning:</b> LLM explanation mentions a risk score of 85%, but actual score is 44%. This may indicate a hallucination.</p><h3>Judge Feedback (Score &lt; 4.0):</h3>
+<table>
+<thead>
+<tr><th>Judge      </th><th>Feedback Summary  </th></tr>
+</thead>
+<tbody>
+<tr><td>MockJudge1 </td><td>Clarity: 4/5
+Conciseness: 2/5
+Completeness: 2/5
+Complete evaluation provided.                   </td></tr>
+<tr><td>MockJudge2 </td><td>Clarity: 1/5
+Conciseness: 2/5
+Completeness: 3/5
+Complete evaluation provided.                   </td></tr>
+<tr><td>MockJudge3 </td><td>Clarity: 4/5
+Conciseness: 4/5
+Completeness: 3/5
+Complete evaluation provided.                   </td></tr>
+<tr><td>MockJudge4 </td><td>Clarity: 2/5
+Conciseness: 2/5
+Completeness: 1/5
+Complete evaluation provided.                   </td></tr>
+<tr><td>MockJudge5 </td><td>Clarity: 1/5
+Conciseness: 5/5
+Completeness: 3/5
+Complete evaluation provided.                   </td></tr>
+<tr><td>MockJudge6 </td><td>Clarity: 3/5
+Conciseness: 4/5
+Completeness: 4/5
+Complete evaluation provided.                   </td></tr>
+<tr><td>MockJudge7 </td><td>Clarity: 1/5
+Conciseness: 4/5
+Completeness: 3/5
+Complete evaluation provided.                   </td></tr>
+<tr><td>MockJudge8 </td><td>Clarity: 5/5
+Conciseness: 4/5
+Completeness: 3/5
+Complete evaluation provided.                   </td></tr>
+<tr><td>MockJudge9 </td><td>Clarity: 1/5
+Conciseness: 5/5
+Completeness: 2/5
+Complete evaluation provided.                   </td></tr>
+<tr><td>MockJudge10</td><td>Clarity: 5/5
+Conciseness: 3/5
+Completeness: 1/5
+Complete evaluation provided.                   </td></tr>
+</tbody>
+</table></body></html>

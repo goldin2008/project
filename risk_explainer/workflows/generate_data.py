@@ -1129,9 +1129,87 @@ def plot_model_metric_trends_combined_vertical(model_data_dict, save_path="plots
 #         if abs(explained_score - actual_score) > 20:
 #             print(f"\n⚠️ Warning: LLM explanation mentions a risk score of {explained_score}%, "
 #                   f"but actual score is {actual_score}%. This may indicate a hallucination.")
-def print_business_friendly_summary(entity, judge_threshold=4.0):
+
+# def print_business_friendly_summary(entity, judge_threshold=4.0):
+#     from tabulate import tabulate
+#     import re
+
+#     entity_id = entity['entity_id']
+#     risk_score = entity['risk_score']
+#     prompt = entity.get('prompt', '[No prompt]')
+#     llm_explanation = entity.get('llm_explanation', '[No explanation]')
+#     stats = entity.get('stats', {})
+#     features = entity['features']
+#     evaluations = entity.get('evaluations', {})
+
+#     # Extract top 5 features by contribution
+#     feature_rows = sorted([
+#         (fname, fdata.get('contribution_pct', 0))
+#         for fname, fdata in features.items()
+#     ], key=lambda x: -x[1])[:5]
+
+#     # Format feature table without values
+#     feature_table = tabulate(
+#         [(fname, f"{contrib:.1f}%") for fname, contrib in feature_rows],
+#         headers=["Feature", "Contribution %"],
+#         tablefmt="grid"
+#     )
+
+#     # Format evaluation stats
+#     stats_table = tabulate(
+#         [
+#             (metric,
+#              f"{metric_stats['mean']:.1f}",
+#              f"{metric_stats['std']:.2f}",
+#              f"{metric_stats['min']:.1f}–{metric_stats['max']:.1f}")
+#             for metric, metric_stats in stats.items()
+#         ],
+#         headers=["Metric", "Mean", "Std Dev", "Range"],
+#         tablefmt="grid"
+#     )
+
+#     # Print summary
+#     print(f"\n{'='*80}")
+#     print(f" Entity ID: {entity_id} |  Risk Score: {risk_score:.0%}")
+#     print(f"{'='*80}")
+
+#     print("\n Top Contributing Features:")
+#     print(feature_table)
+
+#     print("\n Prompt Given to LLM:")
+#     print(prompt)
+
+#     print("\n LLM Explanation:")
+#     print(llm_explanation)
+
+#     print("\n Evaluation Summary:")
+#     print(stats_table)
+
+#     # Optional: Flag discrepancy between LLM explanation and actual score
+#     match = re.search(r'(\d{2,3})\%', llm_explanation)
+#     if match:
+#         explained_score = int(match.group(1))
+#         actual_score = int(risk_score * 100)
+#         if abs(explained_score - actual_score) > 20:
+#             print(f"\n⚠️ Warning: LLM explanation mentions a risk score of {explained_score}%, "
+#                   f"but actual score is {actual_score}%. This may indicate a hallucination.")
+
+#     # Show judge feedback if any metric score < threshold
+#     low_score_judges = []
+#     for judge, feedback in evaluations.items():
+#         for metric in ['Clarity', 'Conciseness', 'Completeness']:
+#             if feedback.get(metric, 5) < judge_threshold:
+#                 low_score_judges.append((judge, feedback.get("Summary", "[No summary]")))
+#                 break
+
+#     if low_score_judges:
+#         print(f"\n Judge Feedback (Score < {judge_threshold}):")
+#         judge_table = tabulate(low_score_judges, headers=["Judge", "Feedback Summary"], tablefmt="grid")
+#         print(judge_table)
+def print_business_friendly_summary(entity, judge_threshold=4.0, output_basename="../data/output/"):
     from tabulate import tabulate
     import re
+    import os
 
     entity_id = entity['entity_id']
     risk_score = entity['risk_score']
@@ -1141,20 +1219,30 @@ def print_business_friendly_summary(entity, judge_threshold=4.0):
     features = entity['features']
     evaluations = entity.get('evaluations', {})
 
+    file_name = f"summary_report_id_{entity_id}"
+
+    output_path = f"{output_basename}{file_name}"
+
+
     # Extract top 5 features by contribution
     feature_rows = sorted([
         (fname, fdata.get('contribution_pct', 0))
         for fname, fdata in features.items()
     ], key=lambda x: -x[1])[:5]
 
-    # Format feature table without values
+    # Format tables
     feature_table = tabulate(
         [(fname, f"{contrib:.1f}%") for fname, contrib in feature_rows],
         headers=["Feature", "Contribution %"],
         tablefmt="grid"
     )
 
-    # Format evaluation stats
+    feature_table_html = tabulate(
+        [(fname, f"{contrib:.1f}%") for fname, contrib in feature_rows],
+        headers=["Feature", "Contribution %"],
+        tablefmt="html"
+    )
+
     stats_table = tabulate(
         [
             (metric,
@@ -1167,33 +1255,19 @@ def print_business_friendly_summary(entity, judge_threshold=4.0):
         tablefmt="grid"
     )
 
-    # Print summary
-    print(f"\n{'='*80}")
-    print(f" Entity ID: {entity_id} |  Risk Score: {risk_score:.0%}")
-    print(f"{'='*80}")
+    stats_table_html = tabulate(
+        [
+            (metric,
+             f"{metric_stats['mean']:.1f}",
+             f"{metric_stats['std']:.2f}",
+             f"{metric_stats['min']:.1f}–{metric_stats['max']:.1f}")
+            for metric, metric_stats in stats.items()
+        ],
+        headers=["Metric", "Mean", "Std Dev", "Range"],
+        tablefmt="html"
+    )
 
-    print("\n Top Contributing Features:")
-    print(feature_table)
-
-    print("\n Prompt Given to LLM:")
-    print(prompt)
-
-    print("\n LLM Explanation:")
-    print(llm_explanation)
-
-    print("\n Evaluation Summary:")
-    print(stats_table)
-
-    # Optional: Flag discrepancy between LLM explanation and actual score
-    match = re.search(r'(\d{2,3})\%', llm_explanation)
-    if match:
-        explained_score = int(match.group(1))
-        actual_score = int(risk_score * 100)
-        if abs(explained_score - actual_score) > 20:
-            print(f"\n⚠️ Warning: LLM explanation mentions a risk score of {explained_score}%, "
-                  f"but actual score is {actual_score}%. This may indicate a hallucination.")
-
-    # Show judge feedback if any metric score < threshold
+    # Judge feedback below threshold
     low_score_judges = []
     for judge, feedback in evaluations.items():
         for metric in ['Clarity', 'Conciseness', 'Completeness']:
@@ -1201,10 +1275,86 @@ def print_business_friendly_summary(entity, judge_threshold=4.0):
                 low_score_judges.append((judge, feedback.get("Summary", "[No summary]")))
                 break
 
+    judge_feedback_txt = ""
+    judge_feedback_html = ""
+
     if low_score_judges:
-        print(f"\n Judge Feedback (Score < {judge_threshold}):")
-        judge_table = tabulate(low_score_judges, headers=["Judge", "Feedback Summary"], tablefmt="grid")
-        print(judge_table)
+        judge_feedback_txt += f"\n Judge Feedback (Score < {judge_threshold}):\n"
+        judge_feedback_txt += tabulate(low_score_judges, headers=["Judge", "Feedback Summary"], tablefmt="grid")
+
+        judge_feedback_html += f"<h3>Judge Feedback (Score &lt; {judge_threshold}):</h3>\n"
+        judge_feedback_html += tabulate(low_score_judges, headers=["Judge", "Feedback Summary"], tablefmt="html")
+
+    # Build content
+    report_txt = f"""
+{'='*80}
+ Entity ID: {entity_id} |  Risk Score: {risk_score:.0%}
+{'='*80}
+
+ Top Contributing Features:
+{feature_table}
+
+ Prompt Given to LLM:
+{prompt}
+
+ LLM Explanation:
+{llm_explanation}
+
+ Evaluation Summary:
+{stats_table}
+"""
+
+    # Discrepancy warning
+    match = re.search(r'(\d{2,3})\%', llm_explanation)
+    if match:
+        explained_score = int(match.group(1))
+        actual_score = int(risk_score * 100)
+        if abs(explained_score - actual_score) > 20:
+            report_txt += (
+                f"\n⚠️ Warning: LLM explanation mentions a risk score of {explained_score}%, "
+                f"but actual score is {actual_score}%. This may indicate a hallucination.\n"
+            )
+
+    report_txt += judge_feedback_txt
+
+    # HTML version
+    report_html = f"""
+<html>
+<head><title>Entity Summary Report</title></head>
+<body>
+<h2>Entity ID: {entity_id} | Risk Score: {risk_score:.0%}</h2>
+<h3>Top Contributing Features:</h3>
+{feature_table_html}
+<h3>Prompt Given to LLM:</h3>
+<pre>{prompt}</pre>
+<h3>LLM Explanation:</h3>
+<pre>{llm_explanation}</pre>
+<h3>Evaluation Summary:</h3>
+{stats_table_html}
+"""
+
+    if match and abs(explained_score - actual_score) > 20:
+        report_html += (
+            f"<p><b>⚠️ Warning:</b> LLM explanation mentions a risk score of {explained_score}%, "
+            f"but actual score is {actual_score}%. This may indicate a hallucination.</p>"
+        )
+
+    report_html += judge_feedback_html
+    report_html += "</body></html>"
+
+    # Write to files
+    txt_path = f"{output_path}.txt"
+    html_path = f"{output_path}.html"
+
+    with open(txt_path, "w", encoding="utf-8") as f_txt:
+        f_txt.write(report_txt)
+
+    with open(html_path, "w", encoding="utf-8") as f_html:
+        f_html.write(report_html)
+
+    # Also print to console
+    print(report_txt)
+    print(f"\n📁 Output saved to: {os.path.abspath(txt_path)} and {os.path.abspath(html_path)}")
 
 
 

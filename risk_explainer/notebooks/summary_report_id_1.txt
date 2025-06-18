@@ -1,0 +1,108 @@
+
+================================================================================
+ Entity ID: 1 |  Risk Score: 44%
+================================================================================
+
+ Top Contributing Features:
++---------------------+------------------+
+| Feature             | Contribution %   |
++=====================+==================+
+| acct_age_days       | 31.1%            |
++---------------------+------------------+
+| num_sar_reports     | 14.2%            |
++---------------------+------------------+
+| login_freq_30d      | 11.6%            |
++---------------------+------------------+
+| wirein_amt          | 10.4%            |
++---------------------+------------------+
+| geo_diversity_score | 9.4%             |
++---------------------+------------------+
+
+ Prompt Given to LLM:
+You are a risk model explanation assistant. Given a risk score and a list of features with their descriptions and contributions, generate a clear, concise narrative explaining the risk score for entity ID 1.
+
+Entity ID: 1
+Risk Score: 44%
+Top Features and Contributions:
+- acct_age_days (Account age in days): 31.1% contribution
+- num_sar_reports (Number of SAR reports filed): 14.2% contribution
+- login_freq_30d (Login frequency in the past 30 days): 11.6% contribution
+- wirein_amt (Total inbound wire amount): 10.4% contribution
+- geo_diversity_score (Number of unique countries accessed from): 9.4% contribution
+
+Please produce a narrative that:
+- Starts with the risk score
+- Explains each feature’s contribution in plain language
+- Highlights why each feature might indicate a higher risk
+
+
+ LLM Explanation:
+This entity has a high risk score of 85% primarily due to three factors: a high number of inbound wires, significant exposure to high-risk countries, and a central position in transaction networks. Each of these increases the risk profile significantly.
+
+ Evaluation Summary:
++--------------+--------+-----------+---------+
+| Metric       |   Mean |   Std Dev | Range   |
++==============+========+===========+=========+
+| Clarity      |    2.7 |      1.7  | 1.0–5.0 |
++--------------+--------+-----------+---------+
+| Conciseness  |    3.5 |      1.18 | 2.0–5.0 |
++--------------+--------+-----------+---------+
+| Completeness |    2.5 |      0.97 | 1.0–4.0 |
++--------------+--------+-----------+---------+
+
+⚠️ Warning: LLM explanation mentions a risk score of 85%, but actual score is 44%. This may indicate a hallucination.
+
+ Judge Feedback (Score < 4.0):
++-------------+-------------------------------+
+| Judge       | Feedback Summary              |
++=============+===============================+
+| MockJudge1  | Clarity: 4/5                  |
+|             | Conciseness: 2/5              |
+|             | Completeness: 2/5             |
+|             | Complete evaluation provided. |
++-------------+-------------------------------+
+| MockJudge2  | Clarity: 1/5                  |
+|             | Conciseness: 2/5              |
+|             | Completeness: 3/5             |
+|             | Complete evaluation provided. |
++-------------+-------------------------------+
+| MockJudge3  | Clarity: 4/5                  |
+|             | Conciseness: 4/5              |
+|             | Completeness: 3/5             |
+|             | Complete evaluation provided. |
++-------------+-------------------------------+
+| MockJudge4  | Clarity: 2/5                  |
+|             | Conciseness: 2/5              |
+|             | Completeness: 1/5             |
+|             | Complete evaluation provided. |
++-------------+-------------------------------+
+| MockJudge5  | Clarity: 1/5                  |
+|             | Conciseness: 5/5              |
+|             | Completeness: 3/5             |
+|             | Complete evaluation provided. |
++-------------+-------------------------------+
+| MockJudge6  | Clarity: 3/5                  |
+|             | Conciseness: 4/5              |
+|             | Completeness: 4/5             |
+|             | Complete evaluation provided. |
++-------------+-------------------------------+
+| MockJudge7  | Clarity: 1/5                  |
+|             | Conciseness: 4/5              |
+|             | Completeness: 3/5             |
+|             | Complete evaluation provided. |
++-------------+-------------------------------+
+| MockJudge8  | Clarity: 5/5                  |
+|             | Conciseness: 4/5              |
+|             | Completeness: 3/5             |
+|             | Complete evaluation provided. |
++-------------+-------------------------------+
+| MockJudge9  | Clarity: 1/5                  |
+|             | Conciseness: 5/5              |
+|             | Completeness: 2/5             |
+|             | Complete evaluation provided. |
++-------------+-------------------------------+
+| MockJudge10 | Clarity: 5/5                  |
+|             | Conciseness: 3/5              |
+|             | Completeness: 1/5             |
+|             | Complete evaluation provided. |
++-------------+-------------------------------+
