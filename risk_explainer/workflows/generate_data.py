@@ -33,6 +33,11 @@ def create_realistic_aml_feature_library():
         ("num_sar_reports", "Number of SAR reports filed"),
         ("login_freq_30d", "Login frequency in the past 30 days"),
         ("geo_diversity_score", "Number of unique countries accessed from"),
+        ("wirein_ct", "Number of wire inbound transactions"),
+        ("wireout_ct", "Number of wire outbound transactions"),
+        ("wirein_amt", "Total inbound wire amount"),
+        ("wireout_amt", "Total outbound wire amount"),
+        ("avg_txn_amt", "Average transaction amount"),
     ]
     return pd.DataFrame(features, columns=["feature_name", "description"])
 
@@ -267,6 +272,54 @@ def add_prompt_to_entity_json(
 
     return updated_entities
 
+
+def generate_rotating_feature_prompts(
+    entity_data_list: list,
+    feature_library_df: pd.DataFrame,
+    top_n: int = 4
+) -> list:
+    """
+    Rotates through the feature library in groups of `top_n` features and
+    adds prompts to each entity using those selected features.
+
+    Each entity gets a different group of features until the entire feature
+    library is covered. Assumes len(entity_data_list) >= number of groups.
+
+    Returns:
+        list of dicts: Entity data with 'prompt' field added.
+    """
+    feature_names = list(feature_library_df["feature_name"])
+    total_features = len(feature_names)
+    group_size = top_n
+
+    # Determine how many full groups of `top_n` features
+    num_groups = total_features // group_size
+    if total_features % group_size != 0:
+        num_groups += 1  # Include the last partial group if exists
+
+    # Only use as many entities as groups
+    if len(entity_data_list) < num_groups:
+        raise ValueError(f"Need at least {num_groups} entities to cover all features with group size {group_size}")
+
+    updated_entities = []
+
+    for i in range(num_groups):
+        start_idx = i * group_size
+        end_idx = min(start_idx + group_size, total_features)
+        selected_features = feature_names[start_idx:end_idx]
+
+        entity_data = entity_data_list[i]
+
+        updated = add_prompt_to_entity_json(
+            [entity_data],  # single-entity list
+            feature_library_df=feature_library_df,
+            top_n=top_n,
+            selected_features=selected_features
+        )[0]  # get the only item in returned list
+
+        updated_entities.append(updated)
+
+    return updated_entities
 
 
 def enrich_entities_with_llm_explanations(
